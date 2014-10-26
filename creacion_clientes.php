@@ -301,12 +301,12 @@ return alfanum($_POST[$cadena]);
 									
 								<div class="alert alert-info">
 									<center>
-										<label>Empresa</label>
+										<label>Datos del Cliente</label>
 									</center>
 								</div>
 								
 								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nit'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="focusedInput">NIT: </label>
+									<label class="control-label" for="focusedInput">Nombre Cliente: </label>
 									<div class="controls">
 										<input class="input-xlarge focused" name='nit' type="text" <?php if(isset($_POST['nit'])){echo("value = '" . $_POST['nit'] . "'");} ?>>
 									</div>
