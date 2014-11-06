@@ -434,7 +434,7 @@ return alfanum($_POST[$cadena]);
 											$resultado = mysql_query($query);
 											while($items = mysql_fetch_array($resultado)){
 												echo("<option value='$items[idMunicipio]'");
-												if($_POST['municipio'] == $items['idMunicipio']){echo(" selected ");}
+												if(isset($_POST['enviado'])){if($_POST['municipio'] == $items['idMunicipio']){echo(" selected ");};}
 												echo(">$items[descripcion]</option>");
 											}
 											?>
@@ -453,7 +453,7 @@ return alfanum($_POST[$cadena]);
 											$resultado = mysql_query($query);
 											while($items = mysql_fetch_array($resultado)){
 												echo("<option value='$items[idDepartamento]'");
-												if($_POST['departamento'] == $items['idDepartamento']){echo(" selected ");}
+												if(isset($_POST['enviado'])){if($_POST['departamento'] == $items['idDepartamento']){echo(" selected ");};}
 												echo(">$items[descripcion]</option>");
 											}
 											?>
