@@ -186,76 +186,110 @@ return alfanum($_POST[$cadena]);
 			<!-- content starts -->
 			<?php
 			if(isset($_POST['enviado'])){
+				$_POST['nombre'] = trim(strtoupper(reemGuion($_POST['nombre'])));
 				$_POST['nit'] = trim(strtoupper(reemGuion($_POST['nit'])));
-				$_POST['fregistro'] = trim(date_format(date_create($_POST['fregistro']), 'Y/m/d'));
-				$_POST['nombreComercial'] = trim(strtoupper($_POST['nombreComercial']));
-				$_POST['razonSocial'] = trim(strtoupper($_POST['razonSocial']));				
-				$_POST['notarioConstitucion'] = trim(strtoupper($_POST['notarioConstitucion']));
-				$_POST['fnotarioConstitucion'] = trim(date_format(date_create($_POST['fnotarioConstitucion']), 'Y/m/d'));
-				$_POST['patente'] = trim(strtoupper($_POST['patente']));
-				$_POST['direccion'] = trim(strtoupper($_POST['direccion']));				
-				$_POST['nombreRepresentante'] = trim(strtoupper($_POST['nombreRepresentante']));
-				$_POST['puestoRepresentante'] = trim(strtoupper($_POST['puestoRepresentante']));				
-				$_POST['fvencimientoRepresentante'] = trim(date_format(date_create($_POST['fvencimientoRepresentante']), 'Y/m/d'));
-				$_POST['nitRepresentante'] = trim(strtoupper(reemGuion($_POST['nitRepresentante'])));
-				$_POST['dpiRepresentante'] = trim(strtoupper(reemGuion($_POST['dpiRepresentante'])));
-				$_POST['direccionRepresentante'] = trim(strtoupper($_POST['direccionRepresentante']));
-				$_POST['telefonoRepresentante'] = trim(strtoupper($_POST['telefonoRepresentante']));
-				$_POST['emailRepresentante'] = trim(strtoupper($_POST['emailRepresentante']));
+				$_POST['dpi'] = trim(strtoupper($_POST['dpi']));
+				$_POST['genero'] = trim(strtoupper($_POST['genero']));
+				$_POST['fnacimiento'] = trim(date_format(date_create($_POST['fnacimiento']), 'Y/m/d'));
+				$_POST['email'] = trim(strtoupper($_POST['email']));				
+				$_POST['tel1'] = trim(strtoupper($_POST['tel1']));
+				$_POST['tel2'] = trim(strtoupper($_POST['tel2']));				
+				$_POST['nomenclatura'] = trim(strtoupper($_POST['nomenclatura']));
+				$_POST['zona'] = trim(strtoupper($_POST['zona']));
+				$_POST['colonia'] = trim(strtoupper($_POST['colonia']));
+				$_POST['municipio'] = trim(strtoupper(reemGuion($_POST['municipio'])));
+				$_POST['departamento'] = trim(strtoupper(reemGuion($_POST['departamento'])));
 			}
 			
 			if(isset($_POST['enviado'])){
 				if($_POST['enviado'] == 1){
-					if($_POST['nit'] == ''){
-						$err_nit = 1;
+					if($_POST['nombre'] == ''){
+						$errNombreCliente = 1;
 						$error = 1;
 					}
-					if($_POST['fregistro'] == ''){
+					if($_POST['nit'] == ''){
 						$err_fregistro = 1;
 						$error = 1;
 					}
-					if($_POST['nombreComercial'] == ''){
+					if($_POST['dpi'] == ''){
 						$err_nombrecomercial = 1;
 						$error = 1;
 					}
-					if($_POST['razonSocial'] == ''){
+					if($_POST['genero'] == ''){
 						$err_razonSocial = 1;
 						$error = 1;
 					}
-					if(isset($_POST['nombreRepresentante'])){
+					
+					if($_POST['fnacimiento'] == ''){
+						$err_nombrecomercial = 1;
+						$error = 1;
+					}
+					
+					if($_POST['email'] == ''){
+						$err_nombrecomercial = 1;
+						$error = 1;
+					}
+					
+					if($_POST['tel1'] == ''){
+						$err_nombrecomercial = 1;
+						$error = 1;
+					}
+					
+					if($_POST['tel2'] == ''){
+						$err_nombrecomercial = 1;
+						$error = 1;
+					}
+					
+					if($_POST['nomenclatura'] == ''){
+						$err_nombrecomercial = 1;
+						$error = 1;
+					}
+					
+					if($_POST['zona'] == ''){
+						$err_nombrecomercial = 1;
+						$error = 1;
+					}
+					
+					if($_POST['colonia'] == ''){
+						$err_nombrecomercial = 1;
+						$error = 1;
+					}
+					
+					if($_POST['municipio'] == ''){
+						$err_nombrecomercial = 1;
+						$error = 1;
+					}
+					
+					if($_POST['departamento'] == ''){
+						$err_nombrecomercial = 1;
+						$error = 1;
+					}
+					
+					/*if(isset($_POST['nombreRepresentante'])){
 						if(alfanum($_POST['nombreRepresentante']) == 0){ 
 							$err_nombreRepresentante = 1;
 							$error = 1;
 						}
-					}
-					if($_POST['puestoRepresentante'] == ''){
-						$err_puestoRepresentante = 1;
-						$error = 1;
-					}
-				}
-			}
-			
-			if(isset($_POST['enviado'])){
-				if($error == 0 && $_POST['enviado'] == 1){
-					$query = "insert into cliente (nit, fecha_registro, nombre_comercial, razon_social, nombre_representante_legal, puesto_representante_legal )  
-					  values('$_POST[nit]','$_POST[fregistro]','$_POST[nombreComercial]','$_POST[razonSocial]', '$_POST[nombreRepresentante]', '$_POST[puestoRepresentante]')";
-					$result = mysql_query($query);
-					if(mysql_errno($con) > 0){
-						$err_msg = "<center>ERROR: " . mysql_errno($con) . " - - - " . mysql_error($con);
-						$error = 1;
-					}else{
-						$query_exitoso = 1;
+					*/
+					if($error == 0){
+						$query = "INSERT INTO cc6.clientes (nombreCliente, fechaNacimiento, genero, nomenclaturaDireccion, zona, colonia, departamento, municipio, telefono1, telefono2, nit, dpi, email)
+						  values('$_POST[nombre]','$_POST[fnacimiento]','$_POST[genero]','$_POST[nomenclatura]', '$_POST[zona]', '$_POST[colonia]', '$_POST[departamento]', '$_POST[municipio]', '$_POST[tel1]', '$_POST[tel2]', '$_POST[nit]', '$_POST[dpi]', '$_POST[email]')";
+						$result = mysql_query($query);
+						if(mysql_errno($con) > 0){
+							$err_msg = "<center>ERROR: " . mysql_errno($con) . " - - - " . mysql_error($con);
+							$error = 1;
+						}else{
+							$query_exitoso = 1;
+						}
 					}
 				}
 			}
-			
 			
 			?>
-			
 			<div class="row-fluid sortable">
 				<div class="box span12">
 					<div class="box-header well" data-original-title>
-						<h2><i class="icon-edit"></i> Formulario creacion de clientes</h2>
+						<h2><i class="icon-edit"></i> Formulario creacion de clientes </h2>
 					</div>
 					<div class="box-content">
 						<form class="form-horizontal" method = 'post' action='creacion_clientes.php'>
@@ -267,7 +301,8 @@ return alfanum($_POST[$cadena]);
 										<center>");
 									if(mysql_errno($con) > 0){
 										if(mysql_errno($con) == 1062){
-											echo("Este NIT ya fue ingresado al sistema, por favor verifique para no duplicar información");
+											//echo("Este NIT ya fue ingresado al sistema, por favor verifique para no duplicar información");
+											echo($err_msg);
 										}else{
 											echo($err_msg);
 										}
@@ -298,154 +333,134 @@ return alfanum($_POST[$cadena]);
 									}
 								}
 								?>
-									
+								
 								<div class="alert alert-info">
 									<center>
-										<label>Datos del Cliente</label>
+										<label>Datos Demograficos</label>
 									</center>
 								</div>
 								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nombre'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Nombre: </label>
+									<div class="controls">
+										<input class="input-xlarge focused" name='nombre' type="text" <?php if(isset($_POST['nombre'])){echo("value = '" . $_POST['nombre'] . "'");} ?>>
+									</div>
+								</div>
+								
 								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nit'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="focusedInput">Nombre Cliente: </label>
+									<label class="control-label" for="focusedInput">NIT: </label>
 									<div class="controls">
 										<input class="input-xlarge focused" name='nit' type="text" <?php if(isset($_POST['nit'])){echo("value = '" . $_POST['nit'] . "'");} ?>>
 									</div>
 								</div>
-							  
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['fregistro'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="fregistro">Fecha Registro:</label>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['dpi'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">DPI: </label>
 									<div class="controls">
-										<input type="text" class="input-xlarge datepicker" name="fregistro" <?php if(isset($_POST['fregistro'])){echo("value = '" . $_POST['fregistro'] . "'");} ?>>										
+										<input class="input-xlarge focused" name='dpi' type="text" <?php if(isset($_POST['dpi'])){echo("value = '" . $_POST['dpi'] . "'");} ?>>
 									</div>
 								</div>
 								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nombreComercial'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="nombreComercial">Nombre Comercial: </label>
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['genero'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Genero: </label>
 									<div class="controls">
-										<input class="input-xlarge focused" name="nombreComercial" type="text" <?php if(isset($_POST['nombreComercial'])){echo("value = '" . $_POST['nombreComercial'] . "'");} ?>>
+										<input class="input-xlarge focused" name='genero' type="text" <?php if(isset($_POST['genero'])){echo("value = '" . $_POST['genero'] . "'");} ?>>
 									</div>
 								</div>
 								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['razonSocial'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="razonSocial">Razón Social: </label>
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['fnacimiento'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="fnacimiento">Fecha de Nacimiento:</label>
 									<div class="controls">
-										<input class="input-xlarge focused" name="razonSocial" type="text" <?php if(isset($_POST['razonSocial'])){echo("value = '" . $_POST['razonSocial'] . "'"); } ?>>
+										<input type="text" class="input-xlarge datepicker" name="fnacimiento" <?php if(isset($_POST['fnacimiento'])){echo("value = '" . $_POST['fnacimiento'] . "'");} ?>>										
 									</div>
 								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['notarioConstitucion'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="notarioConstitucion">Notario quien autorizó constitución de la sociedad: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='notarioConstitucion' type="text" <?php if(isset($_POST['notarioConstitucion'])){echo("value = '" . $_POST['notarioConstitucion'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['fnotarioConstitucion'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="fnotarioConstitucion">Fecha que se autorizó la constitución de la sociedad:</label>
-									<div class="controls">
-										<input type="text" class="input-xlarge datepicker" name="fnotarioConstitucion" <?php if(isset($_POST['fnotarioConstitucion'])){echo("value = '" . $_POST['fnotarioConstitucion'] . "'");} ?>>										
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['razonSocial'] == ''){ echo("error");} ?>">
-									<table>
-										<tr>
-											
-											<td><label for="socio">Socio: </label></td>
-											<td><label for="razonSocial">Porcentaje participación: </label></td>
-										</tr>
-										<tr>
-											<td><input class="input-xlarge focused" name="socio" type="text" <?php if(isset($_POST['socio'])){echo("value = '" . $_POST['socio'] . "'"); } ?>></td>
-											<td>
-												<div class="input-append">
-													<input name="porcentajeSocio" size="16" type="text"><span class="add-on">%</span>
-												</div>
-											</td>
-											<td><input type="button" value="Agregar Socio" onClick="addInput('telefonos','losTelefonos');"></td>
-											
-										</tr>
-									</table>									
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['patente'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="patente">Patente de comercio: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='patente' type="text" <?php if(isset($_POST['patente'])){echo("value = '" . $_POST['patente'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['direccion'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="direccion">Dirección: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='direccion' type="text" <?php if(isset($_POST['direccion'])){echo("value = '" . $_POST['direccion'] . "'");} ?>>
-									</div>
-								</div>
-								
-								
 								
 								<div class="alert alert-info">
 									<center>
-										<label >Representante Legal</label>
+										<label>Datos de Contacto</label>
 									</center>
 								</div>
 								
-								<div class="control-group <?php if(isset($_POST['nombreRepresentante'])){ if(alfanum($_POST['nombreRepresentante']) == 0){ echo("error");} }?>">
-									<label class="control-label" for="nombreRepresentante">Nombre: </label>
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['email'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">e-mail: </label>
 									<div class="controls">
-										<input class="input-xlarge focused" name="nombreRepresentante" type="text" <?php if(isset($_POST['nombreRepresentante'])){echo("value = '" . $_POST['nombreRepresentante'] . "'");} ?>>
-										<?php if(isset($_POST['nombreRepresentante'])){ if(alfanum($_POST['nombreRepresentante']) == 0){ echo("<span class='help-inline'>Caracteres inválidos</span>"); } }?>
+										<input class="input-xlarge focused" name='email' type="text" <?php if(isset($_POST['email'])){echo("value = '" . $_POST['email'] . "'");} ?>>
+									</div>
+								</div>								
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['tel1'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Telefono Fijo: </label>
+									<div class="controls">
+										<input class="input-xlarge focused" name='tel1' type="text" <?php if(isset($_POST['tel1'])){echo("value = '" . $_POST['tel1'] . "'");} ?>>
 									</div>
 								</div>
 								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['puestoRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="puestoRepresentante">Puesto: </label>
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['tel2'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Telefono Móvil: </label>
 									<div class="controls">
-										<input class="input-xlarge focused" name="puestoRepresentante" type="text" <?php if(isset($_POST['puestoRepresentante'])){echo("value = '" . $_POST['puestoRepresentante'] . "'"); } ?>>
+										<input class="input-xlarge focused" name='tel2' type="text" <?php if(isset($_POST['tel2'])){echo("value = '" . $_POST['tel2'] . "'");} ?>>
 									</div>
 								</div>
 								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['fvencimientoRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="fvencimientoRepresentante">Fecha vencimiento representación:</label>
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nomenclatura'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Nomenclatura direccion: </label>
 									<div class="controls">
-										<input type="text" class="input-xlarge datepicker" name="fvencimientoRepresentante" <?php if(isset($_POST['fvencimientoRepresentante'])){echo("value = '" . $_POST['fvencimientoRepresentante'] . "'");} ?>>										
+										<input class="input-xlarge focused" name='nomenclatura' type="text" <?php if(isset($_POST['nomenclatura'])){echo("value = '" . $_POST['nomenclatura'] . "'");} ?>>
 									</div>
 								</div>
 								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nitRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="nitRepresentante">NIT: </label>
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['zona'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Zona direccion: </label>
 									<div class="controls">
-										<input class="input-xlarge focused" name='nitRepresentante' type="text" <?php if(isset($_POST['nitRepresentante'])){echo("value = '" . $_POST['nitRepresentante'] . "'");} ?>>
+										<input class="input-xlarge focused" name='zona' type="text" <?php if(isset($_POST['zona'])){echo("value = '" . $_POST['zona'] . "'");} ?>>
 									</div>
 								</div>
 								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['dpiRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="dpiRepresentante">DPI: </label>
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['colonia'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Colonia direccion: </label>
 									<div class="controls">
-										<input class="input-xlarge focused" name='dpiRepresentante' type="text" <?php if(isset($_POST['dpiRepresentante'])){echo("value = '" . $_POST['dpiRepresentante'] . "'");} ?>>
+										<input class="input-xlarge focused" name='colonia' type="text" <?php if(isset($_POST['colonia'])){echo("value = '" . $_POST['colonia'] . "'");} ?>>
 									</div>
 								</div>
 								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['direccionRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="direccionRepresentante">Dirección: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='direccionRepresentante' type="text" <?php if(isset($_POST['direccionRepresentante'])){echo("value = '" . $_POST['direccionRepresentante'] . "'");} ?>>
-									</div>
-								</div>
 								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['telefonoRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="telefonoRepresentante">Teléfono: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='telefonoRepresentante' type="number" <?php if(isset($_POST['telefonoRepresentante'])){echo("value = '" . $_POST['telefonoRepresentante'] . "'");} ?>>
-									</div>
-								</div>
 								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['emailRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="emailRepresentante">e-mail: </label>
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['municipio'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="municipio">Municipio:</label>
 									<div class="controls">
-										<input class="input-xlarge focused" name='emailRepresentante' type="email" <?php if(isset($_POST['emailRepresentante'])){echo("value = '" . $_POST['emailRepresentante'] . "'");} ?>>
+										<select id="municipio" name='municipio' data-rel="chosen" <?php if(isset($_POST['municipio'])){echo("value = '" . $_POST['municipio'] . "'");} ?>>
+											<?php
+											$query = 'select *  from municipios';
+											$resultado = mysql_query($query);
+											while($items = mysql_fetch_array($resultado)){
+												echo("<option value='$items[idMunicipio]'");
+												if($_POST['municipio'] == $items['idMunicipio']){echo(" selected ");}
+												echo(">$items[descripcion]</option>");
+											}
+											?>
+										</select>
 									</div>
-								</div>
+								 </div>
 								
+								
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['departamento'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="departamento">Departamento:</label>
+									<div class="controls">
+										<select id="departamento" name='departamento' data-rel="chosen" <?php if(isset($_POST['departamento'])){echo("value = '" . $_POST['departamento'] . "'");} ?>>
+											<?php
+											$query = 'select *  from departamentos';
+											$resultado = mysql_query($query);
+											while($items = mysql_fetch_array($resultado)){
+												echo("<option value='$items[idDepartamento]'");
+												if($_POST['departamento'] == $items['idDepartamento']){echo(" selected ");}
+												echo(">$items[descripcion]</option>");
+											}
+											?>
+										</select>
+									</div>
+								 </div>
+																
 								<input type='hidden' name='enviado' value='1'>
 							  
 								<div class="form-actions">
@@ -459,7 +474,7 @@ return alfanum($_POST[$cadena]);
 					</div>
 				</div><!--/span-->
 			</div><!--/row-->
-			
+				
 			<!-- content ends -->
 			</div><!--/#content.span10-->
 				</div><!--/fluid-row-->
