@@ -111,7 +111,7 @@ $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 						<li class="nav-header hidden-tablet">Clientes</li>
 						<?php 
 						if ($_SESSION['leer'] == 1){
-						echo("<li><a class='ajax-link' href='#'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Clientes</span></a></li>");
+						echo("<li><a class='ajax-link' href='consulta clientes.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Clientes</span></a></li>");
 						}
 						if ($_SESSION['modificar'] == 1){
 						echo("<li><a class='ajax-link' href='#'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Clientes</span></a></li>");

@@ -9,6 +9,7 @@ session_start();
 $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 $error = 0;
 $query_exitoso = 0;
+$cosa = 0;
 
 function reemGuion($cadena) {
 	$patron = '/-/';
@@ -189,110 +190,69 @@ return alfanum($_POST[$cadena]);
 				$_POST['nombre'] = trim(strtoupper(reemGuion($_POST['nombre'])));
 				$_POST['nit'] = trim(strtoupper(reemGuion($_POST['nit'])));
 				$_POST['dpi'] = trim(strtoupper($_POST['dpi']));
-				$_POST['genero'] = trim(strtoupper($_POST['genero']));
-				$_POST['fnacimiento'] = trim(date_format(date_create($_POST['fnacimiento']), 'Y/m/d'));
-				$_POST['email'] = trim(strtoupper($_POST['email']));				
-				$_POST['tel1'] = trim(strtoupper($_POST['tel1']));
-				$_POST['tel2'] = trim(strtoupper($_POST['tel2']));				
-				$_POST['nomenclatura'] = trim(strtoupper($_POST['nomenclatura']));
-				$_POST['zona'] = trim(strtoupper($_POST['zona']));
-				$_POST['colonia'] = trim(strtoupper($_POST['colonia']));
-				$_POST['municipio'] = trim(strtoupper(reemGuion($_POST['municipio'])));
-				$_POST['departamento'] = trim(strtoupper(reemGuion($_POST['departamento'])));
 			}
 			
 			if(isset($_POST['enviado'])){
 				if($_POST['enviado'] == 1){
 					if($_POST['nombre'] == ''){
 						$errNombreCliente = 1;
-						$error = 1;
+						//$error = 1;
 					}
 					if($_POST['nit'] == ''){
 						$err_fregistro = 1;
-						$error = 1;
+						//$error = 1;
 					}
 					if($_POST['dpi'] == ''){
 						$err_nombrecomercial = 1;
-						$error = 1;
-					}
-					if($_POST['genero'] == ''){
-						$err_razonSocial = 1;
-						$error = 1;
+						//$error = 1;
 					}
 					
-					if($_POST['fnacimiento'] == ''){
-						$err_nombrecomercial = 1;
-						$error = 1;
-					}
-					
-					if($_POST['email'] == ''){
-						$err_nombrecomercial = 1;
-						$error = 1;
-					}
-					
-					if($_POST['tel1'] == ''){
-						$err_nombrecomercial = 1;
-						$error = 1;
-					}
-					
-					if($_POST['tel2'] == ''){
-						$err_nombrecomercial = 1;
-						$error = 1;
-					}
-					
-					if($_POST['nomenclatura'] == ''){
-						$err_nombrecomercial = 1;
-						$error = 1;
-					}
-					
-					if($_POST['zona'] == ''){
-						$err_nombrecomercial = 1;
-						$error = 1;
-					}
-					
-					if($_POST['colonia'] == ''){
-						$err_nombrecomercial = 1;
-						$error = 1;
-					}
-					
-					if($_POST['municipio'] == ''){
-						$err_nombrecomercial = 1;
-						$error = 1;
-					}
-					
-					if($_POST['departamento'] == ''){
-						$err_nombrecomercial = 1;
-						$error = 1;
-					}
-					
-					/*if(isset($_POST['nombreRepresentante'])){
-						if(alfanum($_POST['nombreRepresentante']) == 0){ 
-							$err_nombreRepresentante = 1;
-							$error = 1;
-						}
-					*/
 					if($error == 0){
-						$query = "INSERT INTO cc6.clientes (nombreCliente, fechaNacimiento, genero, nomenclaturaDireccion, zona, colonia, departamento, municipio, telefono1, telefono2, nit, dpi, email)
-						  values('$_POST[nombre]','$_POST[fnacimiento]','$_POST[genero]','$_POST[nomenclatura]', '$_POST[zona]', '$_POST[colonia]', '$_POST[departamento]', '$_POST[municipio]', '$_POST[tel1]', '$_POST[tel2]', '$_POST[nit]', '$_POST[dpi]', '$_POST[email]')";
-						$result = mysql_query($query);
+						$query = "select * from clientes where nombreCliente like'%$_POST[nombre]%' or nit = '$_POST[nit]' or dpi = '$_POST[dpi]'";
+						$resultado = mysql_query($query);
 						if(mysql_errno($con) > 0){
 							$err_msg = "<center>ERROR: " . mysql_errno($con) . " - - - " . mysql_error($con);
 							$error = 1;
 						}else{
 							$query_exitoso = 1;
+							$cosa = 2;
+							//$query = 'select *  from departamentos';
+							$resultado = mysql_query($query);
+							?>
+							<div class="row-fluid sortable">
+								<div class="box span12">
+									<div class="box-header well" data-original-title>
+										<h2><i class="icon-edit"></i> Parametros de Busqueda </h2>
+									</div>
+									<div class="box-content">
+										<form class="form-horizontal" method = 'post' action=' <?php $_SERVER['PHP_SELF'] ?> '>
+											<fieldset>
+							<?php
+							while($items = mysql_fetch_array($resultado)){
+								echo("$items[nombreCliente] <br>");
+							}
+							?>
+											</fieldset>
+										  </form>
+									</div>
+								</div><!--/span-->
+							</div><!--/row-->
+							<?php
 						}
 					}
 				}
 			}
 			
+			
+			if($cosa == 0){
 			?>
 			<div class="row-fluid sortable">
 				<div class="box span12">
 					<div class="box-header well" data-original-title>
-						<h2><i class="icon-edit"></i> Formulario creacion de clientes </h2>
+						<h2><i class="icon-edit"></i> Parametros de Busqueda </h2>
 					</div>
 					<div class="box-content">
-						<form class="form-horizontal" method = 'post' action='creacion_clientes.php'>
+						<form class="form-horizontal" method = 'post' action=' <?php $_SERVER['PHP_SELF'] ?> '>
 							<fieldset>
 								<?php
 								if($error == 1){
@@ -336,7 +296,7 @@ return alfanum($_POST[$cadena]);
 								
 								<div class="alert alert-info">
 									<center>
-										<label>Datos Demograficos</label>
+										<label>Busqueda de Clientes</label>
 									</center>
 								</div>
 								
@@ -360,113 +320,12 @@ return alfanum($_POST[$cadena]);
 										<input class="input-xlarge focused" name='dpi' type="text" <?php if(isset($_POST['dpi'])){echo("value = '" . $_POST['dpi'] . "'");} ?>>
 									</div>
 								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['genero'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="focusedInput">Genero: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='genero' type="text" <?php if(isset($_POST['genero'])){echo("value = '" . $_POST['genero'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['fnacimiento'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="fnacimiento">Fecha de Nacimiento:</label>
-									<div class="controls">
-										<input type="text" class="input-xlarge datepicker" name="fnacimiento" <?php if(isset($_POST['fnacimiento'])){echo("value = '" . $_POST['fnacimiento'] . "'");} ?>>										
-									</div>
-								</div>
-								
-								<div class="alert alert-info">
-									<center>
-										<label>Datos de Contacto</label>
-									</center>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['email'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="focusedInput">e-mail: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='email' type="text" <?php if(isset($_POST['email'])){echo("value = '" . $_POST['email'] . "'");} ?>>
-									</div>
-								</div>								
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['tel1'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="focusedInput">Telefono Fijo: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='tel1' type="text" <?php if(isset($_POST['tel1'])){echo("value = '" . $_POST['tel1'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['tel2'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="focusedInput">Telefono Móvil: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='tel2' type="text" <?php if(isset($_POST['tel2'])){echo("value = '" . $_POST['tel2'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nomenclatura'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="focusedInput">Nomenclatura direccion: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='nomenclatura' type="text" <?php if(isset($_POST['nomenclatura'])){echo("value = '" . $_POST['nomenclatura'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['zona'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="focusedInput">Zona direccion: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='zona' type="text" <?php if(isset($_POST['zona'])){echo("value = '" . $_POST['zona'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['colonia'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="focusedInput">Colonia direccion: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='colonia' type="text" <?php if(isset($_POST['colonia'])){echo("value = '" . $_POST['colonia'] . "'");} ?>>
-									</div>
-								</div>
-								
-								
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['municipio'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="municipio">Municipio:</label>
-									<div class="controls">
-										<select id="municipio" name='municipio' data-rel="chosen" <?php if(isset($_POST['municipio'])){echo("value = '" . $_POST['municipio'] . "'");} ?>>
-											<?php
-											$query = 'select *  from municipios';
-											$resultado = mysql_query($query);
-											while($items = mysql_fetch_array($resultado)){
-												echo("<option value='$items[idMunicipio]'");
-												if(isset($_POST['enviado'])){if($_POST['municipio'] == $items['idMunicipio']){echo(" selected ");};}
-												echo(">$items[descripcion]</option>");
-											}
-											?>
-										</select>
-									</div>
-								 </div>
-								
-								
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['departamento'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="departamento">Departamento:</label>
-									<div class="controls">
-										<select id="departamento" name='departamento' data-rel="chosen" <?php if(isset($_POST['departamento'])){echo("value = '" . $_POST['departamento'] . "'");} ?>>
-											<?php
-											$query = 'select *  from departamentos';
-											$resultado = mysql_query($query);
-											while($items = mysql_fetch_array($resultado)){
-												echo("<option value='$items[idDepartamento]'");
-												if(isset($_POST['enviado'])){if($_POST['departamento'] == $items['idDepartamento']){echo(" selected ");};}
-												echo(">$items[descripcion]</option>");
-											}
-											?>
-										</select>
-									</div>
-								 </div>
 																
 								<input type='hidden' name='enviado' value='1'>
 							  
 								<div class="form-actions">
 								<center>
-									<button type="submit" class="btn btn-primary">Guardar</button>
-									<button class="btn">Cancelar</button>
+									<button type="submit" class="btn btn-primary">Buscar</button>
 								</center>
 								</div>
 							</fieldset>
@@ -474,7 +333,9 @@ return alfanum($_POST[$cadena]);
 					</div>
 				</div><!--/span-->
 			</div><!--/row-->
-				
+			<?php 
+			}
+			?>		
 			<!-- content ends -->
 			</div><!--/#content.span10-->
 				</div><!--/fluid-row-->
