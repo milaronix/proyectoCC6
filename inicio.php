@@ -19,7 +19,7 @@ $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 		http://twitter.com/halalit_usman
 	-->
 	<meta charset="utf-8">
-	<title>eni CRM</title>
+	<title>Asistencia Digital</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="milaronix CRM, ayudando a manejar una mejor relacion con sus clientes.">
 	<meta name="author" content="milaronix">
@@ -212,7 +212,7 @@ $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 		</div>
 
 		<footer>
-			<p class="pull-left">&copy; <a href="http://usman.it" target="_blank">eni CRM</a> 2014</p>
+			<p class="pull-left">&copy; <a href="http://usman.it" target="_blank">Asistencia Digital</a> 2014</p>
 			<p class="pull-right">Elaborado por: <a href="http://usman.it/free-responsive-admin-template">milaronix</a></p>
 		</footer>
 		

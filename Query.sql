@@ -451,3 +451,7 @@ INSERT INTO `cc6`.`municipios` (`descripcion`, `idDepartamento`) VALUES ('CABAÑ
 INSERT INTO `cc6`.`municipios` (`descripcion`, `idDepartamento`) VALUES ('SAN DIEGO', '22');
 INSERT INTO `cc6`.`municipios` (`descripcion`, `idDepartamento`) VALUES ('LA UNION', '22');
 INSERT INTO `cc6`.`municipios` (`descripcion`, `idDepartamento`) VALUES ('HUITE', '22');
+
+select * from clientes;
+select * from clientes where nombreCliente like'%juan%' or nit = '68253400' or dpi = '2080205510101';
+select clientes.*, departamentos.descripcion, municipios.descripcion from clientes, departamentos, municipios where idCliente = 1 and clientes.departamento = departamentos.idDepartamento and clientes.municipio = municipios.idMunicipio

@@ -9,7 +9,7 @@ session_start();
 $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 $error = 0;
 $query_exitoso = 0;
-$cosa = 0;
+$id = $_GET['id'];
 
 function reemGuion($cadena) {
 	$patron = '/-/';
@@ -186,151 +186,141 @@ return alfanum($_POST[$cadena]);
 			
 			<!-- content starts -->
 			<?php
-			if(isset($_POST['enviado'])){
-				$_POST['nombre'] = trim(strtoupper(reemGuion($_POST['nombre'])));
-				$_POST['nit'] = trim(strtoupper(reemGuion($_POST['nit'])));
-				$_POST['dpi'] = trim(strtoupper($_POST['dpi']));
-			}
 			
-			if(isset($_POST['enviado'])){
-				if($_POST['enviado'] == 1){
-					if($_POST['nombre'] == ''){
-						$errNombreCliente = 1;
-						//$error = 1;
-					}
-					if($_POST['nit'] == ''){
-						$err_fregistro = 1;
-						//$error = 1;
-					}
-					if($_POST['dpi'] == ''){
-						$err_nombrecomercial = 1;
-						//$error = 1;
-					}
-					
-					if($error == 0){
-						$query = "select * from clientes where nombreCliente like'%$_POST[nombre]%' or nit = '$_POST[nit]' or dpi = '$_POST[dpi]'";
-						$resultado = mysql_query($query);
-						if(mysql_errno($con) > 0){
-							$err_msg = "<center>ERROR: " . mysql_errno($con) . " - - - " . mysql_error($con);
-							$error = 1;
-						}else{
-							$query_exitoso = 1;
-							$cosa = 2;
-							$resultado = mysql_query($query);
-							?>
-							<div class="row-fluid sortable">
-								<div class="box span12">
-									<div class="box-header well" data-original-title>
-										<h2><i class="icon-edit"></i> Parametros de Busqueda </h2>
-									</div>
-									<div class="box-content">
-										<form class="form-horizontal" method = 'post' action=' <?php $_SERVER['PHP_SELF'] ?> '>
-											<fieldset>
-											<center>
-											<table border=1 style="width:75%">
-												<tr> <td> Nombre del Cliente </td> <td> NIT </td> <td> DPI </td> </tr>
-												
-							<?php
-							while($items = mysql_fetch_array($resultado)){
-								echo("<tr> <td> <a href = 'resultado cliente.php?id=$items[idCliente]'> $items[nombreCliente] </td> <td> $items[nit] </td> <td> $items[dpi] </td> </tr>");
-							}
-							?>
-											</table>
-											</center>
-											</fieldset>
-										  </form>
-									</div>
-								</div><!--/span-->
-							</div><!--/row-->
-							<?php
-						}
-					}
+			if($error == 0){
+				$query = "select clientes.*, departamentos.descripcion as depto, municipios.descripcion as muni from clientes, departamentos, municipios where idCliente = $id and clientes.departamento = departamentos.idDepartamento and clientes.municipio = municipios.idMunicipio";
+				$result = mysql_query($query);
+				if(mysql_errno($con) > 0){
+					$err_msg = "<center>ERROR: " . mysql_errno($con) . " - - - " . mysql_error($con);
+					$error = 1;
+				}else{
+					$items = mysql_fetch_array($result);
 				}
 			}
 			
-			
-			if($cosa == 0){
 			?>
 			<div class="row-fluid sortable">
 				<div class="box span12">
 					<div class="box-header well" data-original-title>
-						<h2><i class="icon-edit"></i> Parametros de Busqueda </h2>
+						<h2><i class="icon-edit"></i> Formulario creacion de clientes </h2>
 					</div>
 					<div class="box-content">
-						<form class="form-horizontal" method = 'post' action=' <?php $_SERVER['PHP_SELF'] ?> '>
+						<form class="form-horizontal" method = 'post' action='creacion_clientes.php'>
 							<fieldset>
-								<?php
-								if($error == 1){
-									echo("
-									<div class='alert alert-error'>
-										<center>");
-									if(mysql_errno($con) > 0){
-										if(mysql_errno($con) == 1062){
-											//echo("Este NIT ya fue ingresado al sistema, por favor verifique para no duplicar información");
-											echo($err_msg);
-										}else{
-											echo($err_msg);
-										}
-									}else{
-										echo("<p><strong>Datos inválidos</strong>, por favor verifique e intente de nuevo.</p>");
-									}
-									echo("
-										</center>
-									</div>
-									");
-								}else{
-									if($query_exitoso == 1){
-										echo("
-									<div class='alert alert-success'>
-										<center>
-											<p>La información del cliente se ha guardado exitosamente.</p>
-										</center>
-									</div>
-									");
-									}else{
-										echo("
-										<div class='alert alert-block '>
-											<center>
-												<p> Todos los campos son obligatorios, por favor ingresarlos, antes de hacer click en el botón de 'Guardar'.</p>
-											</center>
-										</div>
-										");
-									}
-								}
-								?>
 								
 								<div class="alert alert-info">
 									<center>
-										<label>Busqueda de Clientes</label>
+										<label>Datos Demograficos</label>
 									</center>
 								</div>
 								
 								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nombre'] == ''){ echo("error");} ?>">
 									<label class="control-label" for="focusedInput">Nombre: </label>
 									<div class="controls">
-										<input class="input-xlarge focused" name='nombre' type="text" <?php if(isset($_POST['nombre'])){echo("value = '" . $_POST['nombre'] . "'");} ?>>
-									</div>
+									  <span class="input-xlarge uneditable-input"><?php echo($items['nombreCliente']); ?></span>
+									</div>					
 								</div>
 								
 								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nit'] == ''){ echo("error");} ?>">
 									<label class="control-label" for="focusedInput">NIT: </label>
 									<div class="controls">
-										<input class="input-xlarge focused" name='nit' type="text" <?php if(isset($_POST['nit'])){echo("value = '" . $_POST['nit'] . "'");} ?>>
+									  <span class="input-xlarge uneditable-input"><?php echo($items['nit']); ?></span>
 									</div>
 								</div>
 								
 								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['dpi'] == ''){ echo("error");} ?>">
 									<label class="control-label" for="focusedInput">DPI: </label>
 									<div class="controls">
-										<input class="input-xlarge focused" name='dpi' type="text" <?php if(isset($_POST['dpi'])){echo("value = '" . $_POST['dpi'] . "'");} ?>>
+									  <span class="input-xlarge uneditable-input"><?php echo($items['dpi']); ?></span>
 									</div>
 								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['genero'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Genero: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['genero']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['fnacimiento'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="fnacimiento">Fecha de Nacimiento:</label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['fechaNacimiento']); ?></span>
+									</div>
+								</div>
+								
+								<div class="alert alert-info">
+									<center>
+										<label>Datos de Contacto</label>
+									</center>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['email'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">e-mail: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['email']); ?></span>
+									</div>
+								</div>								
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['tel1'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Telefono Fijo: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['telefono1']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['tel2'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Telefono Móvil: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['telefono2']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nomenclatura'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Nomenclatura direccion: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['nomenclaturaDireccion']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['zona'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Zona direccion: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['zona']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['colonia'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Colonia direccion: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['colonia']); ?></span>
+									</div>
+								</div>
+								
+								
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['municipio'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="municipio">Municipio:</label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['muni']); ?></span>
+									</div>
+								 </div>
+								
+								
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['departamento'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="departamento">Departamento:</label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['depto']); ?></span>
+									</div>
+								 </div>
 																
 								<input type='hidden' name='enviado' value='1'>
 							  
 								<div class="form-actions">
 								<center>
-									<button type="submit" class="btn btn-primary">Buscar</button>
+									<button type="submit" class="btn btn-primary">Guardar</button>
+									<button class="btn">Cancelar</button>
 								</center>
 								</div>
 							</fieldset>
@@ -338,9 +328,7 @@ return alfanum($_POST[$cadena]);
 					</div>
 				</div><!--/span-->
 			</div><!--/row-->
-			<?php 
-			}
-			?>		
+				
 			<!-- content ends -->
 			</div><!--/#content.span10-->
 				</div><!--/fluid-row-->

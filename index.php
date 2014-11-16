@@ -8,7 +8,7 @@ $_SESSION['tiempo_expira'] = 1800; //10 minutos
 <html lang="es">
 <head>
 	<meta charset="utf-8">
-	<title>eni CRM</title>
+	<title>Asistencia Digital</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="milaronix CRM, ayudando a manejar una mejor relacion con sus clientes.">
 	<meta name="author" content="milaronix">
@@ -56,7 +56,7 @@ $_SESSION['tiempo_expira'] = 1800; //10 minutos
 		
 			<div class="row-fluid">
 				<div class="span12 center login-header">
-					<h2>Bienvenido a eni CRM</h2>
+					<h2>Bienvenido a Asistencia Digital</h2>
 				</div><!--/span-->
 			</div><!--/row-->
 			
