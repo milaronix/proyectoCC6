@@ -1,8 +1,48 @@
 <?php
 include("/db/conexioni.php");
 session_start();
+	$usuario = 'root';
+	$contra = '';
+	$bd = 'proyecto_cc5';
+	$con = mysql_connect('127.0.0.1', $usuario, $contra);
 //$inactivo = 600; //10 minutos
 $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
+$error = 0;
+$query_exitoso = 0;
+$id = $_GET['id'];
+
+function reemGuion($cadena) {
+	$patron = '/-/';
+	$reemplazo = "";
+	return preg_replace($patron, $reemplazo, $cadena);
+	//return (preg_match($patron, $cadena));
+}
+
+function alfanum($cadena) {
+	$patron = "/^[a-zA-Z0-9]+(\s*\.*\&*\-*\/*[a-zA-Z0-9]*)*([a-zA-Z0-9]|\.)+$/";
+	$reemplazo = "";
+	//return preg_replace($patron, $reemplazo, $cadena);
+	//echo("el codigo devuelto es:" . preg_match($patron, $cadena));
+	return (preg_match($patron, $cadena));
+}
+
+function esfecha($cadena) {
+	$patron = "|[1-31]\/[1-12]\/[1900-3000]|";
+	$reemplazo = "";
+	//return preg_replace($patron, $reemplazo, $cadena);
+	//echo("el codigo devuelto es:" . preg_match($patron, $cadena));
+	return (preg_match($patron, $cadena));
+}
+
+function validateDate($date, $format = 'Y-m-d H:i:s')
+{
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}
+
+function tieneError($cadena){
+return alfanum($_POST[$cadena]);
+}
 ?>
 
 <!DOCTYPE html>
@@ -86,7 +126,7 @@ $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 				
 				<!-- user dropdown starts -->
 				<div class="btn-group pull-right" >
-					<a class="btn dropdown-toggle" data-toggle="dropdown" href="">
+					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 						<i class="icon-user"></i><span class="hidden-phone"> <?php echo($_SESSION['usuario']); ?></span>
 						<span class="caret"></span>
 					</a>
@@ -123,7 +163,7 @@ $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 						<li class="nav-header hidden-tablet">Cuentas</li>
 						<?php 
 						if ($_SESSION['leer'] == 1){
-						echo("<li><a class='ajax-link' href='cliente para consulta cuenta.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
+						echo("<li><a class='ajax-link' href='consulta cuentas.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
 						}
 						if ($_SESSION['modificar'] == 1){
 						echo("<li><a class='ajax-link' href='modificacion cuentas.php'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Cuentas</span></a></li>");
@@ -157,53 +197,217 @@ $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 			<div id="content" class="span10">
 			
 			<!-- content starts -->
-			<div class="sortable row-fluid">
-				<a data-rel="tooltip" title="33 new messages." class="well span3 top-block" href="#">
-					<span class="icon32 icon-color icon-envelope-closed"></span>
-					<div>Messages</div>
-					<div>69</div>
-					<span class="notification red">33</span>
-				</a>
-			</div>
-					
-			<div class="row-fluid sortable">
-				<div class="box span4">
-					<div class="box-header well">
-						<h2><i class="icon-th"></i> Tabs</h2>
-						<div class="box-icon">
-							<a href="#" class="btn btn-setting btn-round"><i class="icon-cog"></i></a>
-							<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
-							<a href="#" class="btn btn-close btn-round"><i class="icon-remove"></i></a>
-						</div>
+			<?php
+			
+			if(isset($_POST['enviado'])){
+				if($error == 0){
+					$query ="select correlativo+1 as corre from bin where bin = $_POST[bin]";
+					//echo("Q1 = ".$query."<br>");
+					$correlativo = mysql_query($query);
+					$correlativo = mysql_fetch_array($correlativo);
+					//echo("correlativo = ".$correlativo['corre']."<br>");
+					$cuenta = ($_POST['bin'] + $correlativo['corre']);
+					$cuenta = number_format($cuenta,0,".","");
+					//echo("cuenta = ".(string)$cuenta."<br>");
+					$query ="update cc6.bin set correlativo = $correlativo[corre] where bin = $_POST[bin]";
+					mysql_query($query);
+					//echo("Q3 = ".$query."<br>");
+					$query = "INSERT INTO cc6.cuentas (numeroDeCuenta, idCliente, fechaApertura, saldo, bin)
+							values('$cuenta','$_POST[id]',CURDATE(),'0.00','$_POST[bin]')";
+					//echo("Q2 = ".$query);
+					$result = mysql_query($query);
+					if(mysql_errno($con) > 0){
+						$err_msg = "<center>ERROR: " . mysql_errno($con) . " - - - " . mysql_error($con);
+						$error = 1;
+					}else{
+						$query_exitoso = 1;
+					}
+				}
+			}
+			
+			if($query_exitoso == 1){
+				echo("
+					<div class='alert alert-success'>
+						<center>
+							<p>La cuenta se ha creado exitosamente.</p>
+						</center>
 					</div>
-					<div class="box-content">
-						<ul class="nav nav-tabs" id="myTab">
-							<li class="active"><a href="#info">Info</a></li>
-							<li><a href="#custom">Custom</a></li>
-							<li><a href="#messages">Messages</a></li>
-						</ul>
-						 
-						<div id="myTabContent" class="tab-content">
-							<div class="tab-pane active" id="info">
-								<h3>Charisma <small>a fully featued template</small></h3>
-								<p>Its a fully featured, responsive template for your admin panel. Its optimized for tablet and mobile phones. Scan the QR code below to view it in your mobile device.</p> <img alt="QR Code" class="charisma_qr center" src="img/qrcode136.png" />
-							</div>
-							<div class="tab-pane" id="custom">
-								<h3>Custom <small>small text</small></h3>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor.</p>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales at. Nulla tellus elit, varius non commodo eget, mattis vel eros. In sed ornare nulla. Donec consectetur, velit a pharetra ultricies, diam lorem lacinia risus, ac commodo orci erat eu massa. Sed sit amet nulla ipsum. Donec felis mauris, vulputate sed tempor at, aliquam a ligula. Pellentesque non pulvinar nisi.</p>
-							</div>
-							<div class="tab-pane" id="messages">
-								<h3>Messages <small>small text</small></h3>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales at. Nulla tellus elit, varius non commodo eget, mattis vel eros. In sed ornare nulla. Donec consectetur, velit a pharetra ultricies, diam lorem lacinia risus, ac commodo orci erat eu massa. Sed sit amet nulla ipsum. Donec felis mauris, vulputate sed tempor at, aliquam a ligula. Pellentesque non pulvinar nisi.</p>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor.</p>
-							</div>
-						</div>
+					");
+			}else{
+			
+			?>
+			<div class="row-fluid sortable">
+				<div class="box span12">
+					<div class="box-header well" data-original-title>
+						<h2><i class="icon-edit"></i> Formulario creacion de cuentas </h2>
+					</div>
+					<div class="box-content">						
+							
+						<form class="form-horizontal" method = 'post' action='<?php $_SERVER['PHP_SELF'] ?>'>
+							<fieldset>
+								
+								<?php
+								if($error == 0){
+									$query = "select clientes.*, departamentos.descripcion as depto, municipios.descripcion as muni, numeroDeCuenta, fechaApertura, saldo, bin.descripcion from clientes, departamentos, municipios, cuentas, bin where clientes.idCliente = '$id' and clientes.departamento = departamentos.iddepartamento and clientes.municipio = municipios.idMunicipio and cuentas.idCliente = clientes.idCliente and cuentas.bin = bin.bin";
+									echo("Q1 = " . $query . "<br>");
+									$result = mysql_query($query);
+									//echo("Q2 = " . $result . "<br>");
+									if(mysql_errno($con) > 0){
+										$err_msg = "<center>ERROR: " . mysql_errno($con) . " - - - " . mysql_error($con);
+										$error = 1;
+									}else{
+										//$items = mysql_fetch_array($result);
+									}
+								}
+								?>
+								
+								<div class="alert alert-info">
+									<center>
+										<label>Cuentas Asociadas</label>
+									</center>
+								</div>
+								
+								<table class="table table-bordered table-striped table-condensed">
+									<thead>
+										<tr>
+											<th>Cuenta</th>
+											<th>Producto</th>
+											<th>Fecha Apertura</th>
+											<th>Saldo</th>																					  
+										</tr>
+									</thead>   
+									<tbody>
+										<tr>
+											<?php
+											while($items = mysql_fetch_array($result)){
+												echo("<tr>");
+												echo("<td>$items[numeroDeCuenta]</td>");
+												echo("<td class='center'>$items[descripcion]</td>");
+												echo("<td class='center'>$items[fechaApertura]</td>");
+												echo("<td class='center'>$items[saldo]</td>");
+												echo("</tr>");
+											}
+											$result = mysql_query($query);
+											$items = mysql_fetch_array($result);
+											?>
+																					
+										</tr>
+								</table>
+								
+								<div class="alert alert-info">
+									<center>
+										<label>Datos Demograficos</label>
+									</center>
+								</div>							
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nombre'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Nombre: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['nombreCliente']); ?></span>
+									</div>					
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nit'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">NIT: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['nit']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['dpi'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">DPI: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['dpi']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['genero'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Genero: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['genero']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['fnacimiento'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="fnacimiento">Fecha de Nacimiento:</label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['fechaNacimiento']); ?></span>
+									</div>
+								</div>
+								
+								<div class="alert alert-info">
+									<center>
+										<label>Datos de Contacto</label>
+									</center>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['email'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">e-mail: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['email']); ?></span>
+									</div>
+								</div>								
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['tel1'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Telefono Fijo: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['telefono1']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['tel2'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Telefono Móvil: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['telefono2']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nomenclatura'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Nomenclatura direccion: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['nomenclaturaDireccion']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['zona'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Zona direccion: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['zona']); ?></span>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['colonia'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Colonia direccion: </label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['colonia']); ?></span>
+									</div>
+								</div>
+								
+								
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['municipio'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="municipio">Municipio:</label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['muni']); ?></span>
+									</div>
+								 </div>
+								
+								
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['bin'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="bin">bin:</label>
+									<div class="controls">
+									  <span class="input-xlarge uneditable-input"><?php echo($items['depto']); ?></span>
+									</div>
+								 </div>												
+							  
+							</fieldset>
+						  </form>
 					</div>
 				</div><!--/span-->
-			</div><!--/row-->		  
-       
-					<!-- content ends -->
+			</div><!--/row-->
+			<?php }?>
+			<!-- content ends -->
 			</div><!--/#content.span10-->
 				</div><!--/fluid-row-->
 				

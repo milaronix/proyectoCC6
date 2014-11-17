@@ -159,6 +159,18 @@ return alfanum($_POST[$cadena]);
 						echo("<li><a class='ajax-link' href='creacion_clientes.php'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Clientes</span></a></li>");
 						}
 						?>
+						<li class="nav-header hidden-tablet">Cuentas</li>
+						<?php 
+						if ($_SESSION['leer'] == 1){
+						echo("<li><a class='ajax-link' href='consulta cuentas.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
+						}
+						if ($_SESSION['modificar'] == 1){
+						echo("<li><a class='ajax-link' href='modificacion cuentas.php'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Cuentas</span></a></li>");
+						}
+						if ($_SESSION['crear'] == 1){
+						echo("<li><a class='ajax-link' href='creacion_cuentas.php'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Cuentas</span></a></li>");
+						}
+						?>
 						<li class="nav-header hidden-tablet">Gestiones</li>
 						<li><a class="ajax-link" href="#"><i class="icon-eye-open"></i><span class="hidden-tablet"> Consulta de Gestiones</span></a></li>
 						<?php 

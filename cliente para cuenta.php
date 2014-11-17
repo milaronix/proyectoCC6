@@ -9,6 +9,7 @@ session_start();
 $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 $error = 0;
 $query_exitoso = 0;
+$cosa = 0;
 
 function reemGuion($cadena) {
 	$patron = '/-/';
@@ -58,7 +59,7 @@ return alfanum($_POST[$cadena]);
 		http://twitter.com/halalit_usman
 	-->
 	<meta charset="utf-8">
-	<title>eni CRM</title>
+	<title>Asistencia Digital</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta name="description" content="milaronix CRM, ayudando a manejar una mejor relacion con sus clientes.">
 	<meta name="author" content="milaronix">
@@ -150,13 +151,25 @@ return alfanum($_POST[$cadena]);
 						<li class="nav-header hidden-tablet">Clientes</li>
 						<?php 
 						if ($_SESSION['leer'] == 1){
-						echo("<li><a class='ajax-link' href='#'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Clientes</span></a></li>");
+						echo("<li><a class='ajax-link' href='consulta clientes.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Clientes</span></a></li>");
 						}
 						if ($_SESSION['modificar'] == 1){
-						echo("<li><a class='ajax-link' href='#'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Clientes</span></a></li>");
+						echo("<li><a class='ajax-link' href='modificacion clientes.php'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Clientes</span></a></li>");
 						}
 						if ($_SESSION['crear'] == 1){
 						echo("<li><a class='ajax-link' href='creacion_clientes.php'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Clientes</span></a></li>");
+						}
+						?>
+						<li class="nav-header hidden-tablet">Cuentas</li>
+						<?php 
+						if ($_SESSION['leer'] == 1){
+						echo("<li><a class='ajax-link' href='consulta cuentas.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
+						}
+						if ($_SESSION['modificar'] == 1){
+						echo("<li><a class='ajax-link' href='modificacion cuentas.php'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Cuentas</span></a></li>");
+						}
+						if ($_SESSION['crear'] == 1){
+						echo("<li><a class='ajax-link' href='cliente para cuenta.php'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Cuentas</span></a></li>");
 						}
 						?>
 						<li class="nav-header hidden-tablet">Gestiones</li>
@@ -186,79 +199,77 @@ return alfanum($_POST[$cadena]);
 			<!-- content starts -->
 			<?php
 			if(isset($_POST['enviado'])){
+				$_POST['nombre'] = trim(strtoupper(reemGuion($_POST['nombre'])));
 				$_POST['nit'] = trim(strtoupper(reemGuion($_POST['nit'])));
-				$_POST['fregistro'] = trim(date_format(date_create($_POST['fregistro']), 'Y/m/d'));
-				$_POST['nombreComercial'] = trim(strtoupper($_POST['nombreComercial']));
-				$_POST['razonSocial'] = trim(strtoupper($_POST['razonSocial']));				
-				$_POST['notarioConstitucion'] = trim(strtoupper($_POST['notarioConstitucion']));
-				$_POST['fnotarioConstitucion'] = trim(date_format(date_create($_POST['fnotarioConstitucion']), 'Y/m/d'));
-				$_POST['patente'] = trim(strtoupper($_POST['patente']));
-				$_POST['direccion'] = trim(strtoupper($_POST['direccion']));				
-				$_POST['nombreRepresentante'] = trim(strtoupper($_POST['nombreRepresentante']));
-				$_POST['puestoRepresentante'] = trim(strtoupper($_POST['puestoRepresentante']));				
-				$_POST['fvencimientoRepresentante'] = trim(date_format(date_create($_POST['fvencimientoRepresentante']), 'Y/m/d'));
-				$_POST['nitRepresentante'] = trim(strtoupper(reemGuion($_POST['nitRepresentante'])));
-				$_POST['dpiRepresentante'] = trim(strtoupper(reemGuion($_POST['dpiRepresentante'])));
-				$_POST['direccionRepresentante'] = trim(strtoupper($_POST['direccionRepresentante']));
-				$_POST['telefonoRepresentante'] = trim(strtoupper($_POST['telefonoRepresentante']));
-				$_POST['emailRepresentante'] = trim(strtoupper($_POST['emailRepresentante']));
+				$_POST['dpi'] = trim(strtoupper($_POST['dpi']));
 			}
 			
 			if(isset($_POST['enviado'])){
 				if($_POST['enviado'] == 1){
+					if($_POST['nombre'] == ''){
+						$errNombreCliente = 1;
+						//$error = 1;
+					}
 					if($_POST['nit'] == ''){
-						$err_nit = 1;
-						$error = 1;
-					}
-					if($_POST['fregistro'] == ''){
 						$err_fregistro = 1;
-						$error = 1;
+						//$error = 1;
 					}
-					if($_POST['nombreComercial'] == ''){
+					if($_POST['dpi'] == ''){
 						$err_nombrecomercial = 1;
-						$error = 1;
+						//$error = 1;
 					}
-					if($_POST['razonSocial'] == ''){
-						$err_razonSocial = 1;
-						$error = 1;
-					}
-					if(isset($_POST['nombreRepresentante'])){
-						if(alfanum($_POST['nombreRepresentante']) == 0){ 
-							$err_nombreRepresentante = 1;
+					
+					if($error == 0){
+						$query = "select * from clientes where nombreCliente like'%$_POST[nombre]%' or nit = '$_POST[nit]' or dpi = '$_POST[dpi]'";
+						$resultado = mysql_query($query);
+						if(mysql_errno($con) > 0){
+							$err_msg = "<center>ERROR: " . mysql_errno($con) . " - - - " . mysql_error($con);
 							$error = 1;
+						}else{
+							$query_exitoso = 1;
+							$cosa = 2;
+							$resultado = mysql_query($query);
+							?>
+							<div class="row-fluid sortable">
+								<div class="box span12">
+									<div class="box-header well" data-original-title>
+										<h2><i class="icon-edit"></i> Parametros de Busqueda </h2>
+									</div>
+									<div class="box-content">
+										<form class="form-horizontal" method = 'post' action=' <?php $_SERVER['PHP_SELF'] ?> '>
+											<fieldset>
+											<center>
+											<table border=1 style="width:75%">
+												<tr> <td> Nombre del Cliente </td> <td> NIT </td> <td> DPI </td> </tr>
+												
+							<?php
+							while($items = mysql_fetch_array($resultado)){
+								echo("<tr> <td> <a href = 'creacion cuentas.php?id=$items[idCliente]'> $items[nombreCliente] </td> <td> $items[nit] </td> <td> $items[dpi] </td> </tr>");
+							}
+							?>
+											</table>
+											</center>
+											</fieldset>
+										  </form>
+									</div>
+								</div><!--/span-->
+							</div><!--/row-->
+							<?php
 						}
 					}
-					if($_POST['puestoRepresentante'] == ''){
-						$err_puestoRepresentante = 1;
-						$error = 1;
-					}
-				}
-			}
-			
-			if(isset($_POST['enviado'])){
-				if($error == 0 && $_POST['enviado'] == 1){
-					$query = "insert into cliente (nit, fecha_registro, nombre_comercial, razon_social, nombre_representante_legal, puesto_representante_legal )  
-					  values('$_POST[nit]','$_POST[fregistro]','$_POST[nombreComercial]','$_POST[razonSocial]', '$_POST[nombreRepresentante]', '$_POST[puestoRepresentante]')";
-					$result = mysql_query($query);
-					if(mysql_errno($con) > 0){
-						$err_msg = "<center>ERROR: " . mysql_errno($con) . " - - - " . mysql_error($con);
-						$error = 1;
-					}else{
-						$query_exitoso = 1;
-					}
 				}
 			}
 			
 			
+			if($cosa == 0){
 			?>
-			
 			<div class="row-fluid sortable">
 				<div class="box span12">
 					<div class="box-header well" data-original-title>
-						<h2><i class="icon-edit"></i> Formulario creacion de clientes</h2>
+						<h2><i class="icon-edit"></i> Parametros de Busqueda </h2>
 					</div>
 					<div class="box-content">
-						<form class="form-horizontal" method = 'post' action='creacion_clientes.php'>
+						<form class="form-horizontal" method = 'post' action=' <?php $_SERVER['PHP_SELF'] ?> '>
 							<fieldset>
 								<?php
 								if($error == 1){
@@ -267,7 +278,8 @@ return alfanum($_POST[$cadena]);
 										<center>");
 									if(mysql_errno($con) > 0){
 										if(mysql_errno($con) == 1062){
-											echo("Este NIT ya fue ingresado al sistema, por favor verifique para no duplicar información");
+											//echo("Este NIT ya fue ingresado al sistema, por favor verifique para no duplicar información");
+											echo($err_msg);
 										}else{
 											echo($err_msg);
 										}
@@ -298,11 +310,18 @@ return alfanum($_POST[$cadena]);
 									}
 								}
 								?>
-									
+								
 								<div class="alert alert-info">
 									<center>
-										<label>Empresa</label>
+										<label>Busqueda de Clientes</label>
 									</center>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nombre'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Nombre: </label>
+									<div class="controls">
+										<input class="input-xlarge focused" name='nombre' type="text" <?php if(isset($_POST['nombre'])){echo("value = '" . $_POST['nombre'] . "'");} ?>>
+									</div>
 								</div>
 								
 								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nit'] == ''){ echo("error");} ?>">
@@ -311,147 +330,19 @@ return alfanum($_POST[$cadena]);
 										<input class="input-xlarge focused" name='nit' type="text" <?php if(isset($_POST['nit'])){echo("value = '" . $_POST['nit'] . "'");} ?>>
 									</div>
 								</div>
-							  
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['fregistro'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="fregistro">Fecha Registro:</label>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['dpi'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">DPI: </label>
 									<div class="controls">
-										<input type="text" class="input-xlarge datepicker" name="fregistro" <?php if(isset($_POST['fregistro'])){echo("value = '" . $_POST['fregistro'] . "'");} ?>>										
+										<input class="input-xlarge focused" name='dpi' type="text" <?php if(isset($_POST['dpi'])){echo("value = '" . $_POST['dpi'] . "'");} ?>>
 									</div>
 								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nombreComercial'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="nombreComercial">Nombre Comercial: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name="nombreComercial" type="text" <?php if(isset($_POST['nombreComercial'])){echo("value = '" . $_POST['nombreComercial'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['razonSocial'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="razonSocial">Razón Social: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name="razonSocial" type="text" <?php if(isset($_POST['razonSocial'])){echo("value = '" . $_POST['razonSocial'] . "'"); } ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['notarioConstitucion'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="notarioConstitucion">Notario quien autorizó constitución de la sociedad: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='notarioConstitucion' type="text" <?php if(isset($_POST['notarioConstitucion'])){echo("value = '" . $_POST['notarioConstitucion'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['fnotarioConstitucion'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="fnotarioConstitucion">Fecha que se autorizó la constitución de la sociedad:</label>
-									<div class="controls">
-										<input type="text" class="input-xlarge datepicker" name="fnotarioConstitucion" <?php if(isset($_POST['fnotarioConstitucion'])){echo("value = '" . $_POST['fnotarioConstitucion'] . "'");} ?>>										
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['razonSocial'] == ''){ echo("error");} ?>">
-									<table>
-										<tr>
-											
-											<td><label for="socio">Socio: </label></td>
-											<td><label for="razonSocial">Porcentaje participación: </label></td>
-										</tr>
-										<tr>
-											<td><input class="input-xlarge focused" name="socio" type="text" <?php if(isset($_POST['socio'])){echo("value = '" . $_POST['socio'] . "'"); } ?>></td>
-											<td>
-												<div class="input-append">
-													<input name="porcentajeSocio" size="16" type="text"><span class="add-on">%</span>
-												</div>
-											</td>
-											<td><input type="button" value="Agregar Socio" onClick="addInput('telefonos','losTelefonos');"></td>
-											
-										</tr>
-									</table>									
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['patente'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="patente">Patente de comercio: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='patente' type="text" <?php if(isset($_POST['patente'])){echo("value = '" . $_POST['patente'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['direccion'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="direccion">Dirección: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='direccion' type="text" <?php if(isset($_POST['direccion'])){echo("value = '" . $_POST['direccion'] . "'");} ?>>
-									</div>
-								</div>
-								
-								
-								
-								<div class="alert alert-info">
-									<center>
-										<label >Representante Legal</label>
-									</center>
-								</div>
-								
-								<div class="control-group <?php if(isset($_POST['nombreRepresentante'])){ if(alfanum($_POST['nombreRepresentante']) == 0){ echo("error");} }?>">
-									<label class="control-label" for="nombreRepresentante">Nombre: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name="nombreRepresentante" type="text" <?php if(isset($_POST['nombreRepresentante'])){echo("value = '" . $_POST['nombreRepresentante'] . "'");} ?>>
-										<?php if(isset($_POST['nombreRepresentante'])){ if(alfanum($_POST['nombreRepresentante']) == 0){ echo("<span class='help-inline'>Caracteres inválidos</span>"); } }?>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['puestoRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="puestoRepresentante">Puesto: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name="puestoRepresentante" type="text" <?php if(isset($_POST['puestoRepresentante'])){echo("value = '" . $_POST['puestoRepresentante'] . "'"); } ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['fvencimientoRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="fvencimientoRepresentante">Fecha vencimiento representación:</label>
-									<div class="controls">
-										<input type="text" class="input-xlarge datepicker" name="fvencimientoRepresentante" <?php if(isset($_POST['fvencimientoRepresentante'])){echo("value = '" . $_POST['fvencimientoRepresentante'] . "'");} ?>>										
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nitRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="nitRepresentante">NIT: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='nitRepresentante' type="text" <?php if(isset($_POST['nitRepresentante'])){echo("value = '" . $_POST['nitRepresentante'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['dpiRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="dpiRepresentante">DPI: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='dpiRepresentante' type="text" <?php if(isset($_POST['dpiRepresentante'])){echo("value = '" . $_POST['dpiRepresentante'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['direccionRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="direccionRepresentante">Dirección: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='direccionRepresentante' type="text" <?php if(isset($_POST['direccionRepresentante'])){echo("value = '" . $_POST['direccionRepresentante'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['telefonoRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="telefonoRepresentante">Teléfono: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='telefonoRepresentante' type="number" <?php if(isset($_POST['telefonoRepresentante'])){echo("value = '" . $_POST['telefonoRepresentante'] . "'");} ?>>
-									</div>
-								</div>
-								
-								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['emailRepresentante'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="emailRepresentante">e-mail: </label>
-									<div class="controls">
-										<input class="input-xlarge focused" name='emailRepresentante' type="email" <?php if(isset($_POST['emailRepresentante'])){echo("value = '" . $_POST['emailRepresentante'] . "'");} ?>>
-									</div>
-								</div>
-								
+																
 								<input type='hidden' name='enviado' value='1'>
 							  
 								<div class="form-actions">
 								<center>
-									<button type="submit" class="btn btn-primary">Guardar</button>
-									<button class="btn">Cancelar</button>
+									<button type="submit" class="btn btn-primary">Buscar</button>
 								</center>
 								</div>
 							</fieldset>
@@ -459,7 +350,9 @@ return alfanum($_POST[$cadena]);
 					</div>
 				</div><!--/span-->
 			</div><!--/row-->
-			
+			<?php 
+			}
+			?>		
 			<!-- content ends -->
 			</div><!--/#content.span10-->
 				</div><!--/fluid-row-->
@@ -481,7 +374,7 @@ return alfanum($_POST[$cadena]);
 		</div>
 
 		<footer>
-			<p class="pull-left">&copy; <a href="http://usman.it" target="_blank">eni CRM</a> 2014</p>
+			<p class="pull-left">&copy; <a href="http://usman.it" target="_blank">Asistencia Digital</a> 2014</p>
 			<p class="pull-right">Elaborado por: <a href="http://usman.it/free-responsive-admin-template">milaronix</a></p>
 		</footer>
 		
