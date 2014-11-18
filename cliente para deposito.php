@@ -1,8 +1,48 @@
 <?php
 include("/db/conexioni.php");
 session_start();
+	$usuario = 'root';
+	$contra = '';
+	$bd = 'proyecto_cc5';
+	$con = mysql_connect('127.0.0.1', $usuario, $contra);
 //$inactivo = 600; //10 minutos
 $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
+$error = 0;
+$query_exitoso = 0;
+$cosa = 0;
+
+function reemGuion($cadena) {
+	$patron = '/-/';
+	$reemplazo = "";
+	return preg_replace($patron, $reemplazo, $cadena);
+	//return (preg_match($patron, $cadena));
+}
+
+function alfanum($cadena) {
+	$patron = "/^[a-zA-Z0-9]+(\s*\.*\&*\-*\/*[a-zA-Z0-9]*)*([a-zA-Z0-9]|\.)+$/";
+	$reemplazo = "";
+	//return preg_replace($patron, $reemplazo, $cadena);
+	//echo("el codigo devuelto es:" . preg_match($patron, $cadena));
+	return (preg_match($patron, $cadena));
+}
+
+function esfecha($cadena) {
+	$patron = "|[1-31]\/[1-12]\/[1900-3000]|";
+	$reemplazo = "";
+	//return preg_replace($patron, $reemplazo, $cadena);
+	//echo("el codigo devuelto es:" . preg_match($patron, $cadena));
+	return (preg_match($patron, $cadena));
+}
+
+function validateDate($date, $format = 'Y-m-d H:i:s')
+{
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}
+
+function tieneError($cadena){
+return alfanum($_POST[$cadena]);
+}
 ?>
 
 <!DOCTYPE html>
@@ -86,7 +126,7 @@ $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 				
 				<!-- user dropdown starts -->
 				<div class="btn-group pull-right" >
-					<a class="btn dropdown-toggle" data-toggle="dropdown" href="">
+					<a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
 						<i class="icon-user"></i><span class="hidden-phone"> <?php echo($_SESSION['usuario']); ?></span>
 						<span class="caret"></span>
 					</a>
@@ -123,13 +163,13 @@ $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 						<li class="nav-header hidden-tablet">Cuentas</li>
 						<?php 
 						if ($_SESSION['leer'] == 1){
-						echo("<li><a class='ajax-link' href='cliente para consulta cuenta.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
+						echo("<li><a class='ajax-link' href='consulta cuentas.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
+						}
+						if ($_SESSION['modificar'] == 1){
+						echo("<li><a class='ajax-link' href='modificacion cuentas.php'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Cuentas</span></a></li>");
 						}
 						if ($_SESSION['crear'] == 1){
 						echo("<li><a class='ajax-link' href='cliente para cuenta.php'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Cuentas</span></a></li>");
-						}
-						if ($_SESSION['crear'] == 1){
-						echo("<li><a class='ajax-link' href='cliente para deposito.php'><i class='icon-download-alt'></i><span class='hidden-tablet'> Depósito a cuenta</span></a></li>");
 						}
 						?>
 						<li class="nav-header hidden-tablet">Gestiones</li>
@@ -157,53 +197,86 @@ $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 			<div id="content" class="span10">
 			
 			<!-- content starts -->
-			<div class="sortable row-fluid">
-				<a data-rel="tooltip" title="33 new messages." class="well span3 top-block" href="#">
-					<span class="icon32 icon-color icon-envelope-closed"></span>
-					<div>Messages</div>
-					<div>69</div>
-					<span class="notification red">33</span>
-				</a>
-			</div>
+			<?php
+			if(isset($_POST['enviado'])){
+				$_POST['nocuenta'] = trim(strtoupper(reemGuion($_POST['nocuenta'])));
+			}
+			
+			if(isset($_POST['enviado'])){
+				if($_POST['enviado'] == 1){
+					if($_POST['nocuenta'] == ''){
+						$errNombreCliente = 1;
+						//$error = 1;
+					}
 					
+					if($error == 0){
+						$query = "select clientes.* from clientes, cuentas where cuentas.idCliente = clientes.idCliente and numeroDeCuenta = '$_POST[nocuenta]'";
+						//echo("Q1 = " . $query);
+						$resultado = mysql_query($query);
+						if(mysql_num_rows($resultado) == 0){
+							$err_msg = "<center>ERROR: La cuenta no existe";
+							$error = 1;
+						}else{
+							$query_exitoso = 1;
+							$cosa = 2;
+							$resultado = mysql_query($query);
+							$items = mysql_fetch_array($resultado);
+							//echo("<div class='alert alert-error'> <center>");
+							echo("<META HTTP-EQUIV='REFRESH' CONTENT='0;URL=deposito.php?id=$items[idCliente]&cuenta=$_POST[nocuenta]'>");
+						}
+					}
+				}
+			}
+			
+			
+			if($cosa == 0){
+			?>
 			<div class="row-fluid sortable">
-				<div class="box span4">
-					<div class="box-header well">
-						<h2><i class="icon-th"></i> Tabs</h2>
-						<div class="box-icon">
-							<a href="#" class="btn btn-setting btn-round"><i class="icon-cog"></i></a>
-							<a href="#" class="btn btn-minimize btn-round"><i class="icon-chevron-up"></i></a>
-							<a href="#" class="btn btn-close btn-round"><i class="icon-remove"></i></a>
-						</div>
+				<div class="box span12">
+					<div class="box-header well" data-original-title>
+						<h2><i class="icon-edit"></i> Parametros de Busqueda </h2>
 					</div>
 					<div class="box-content">
-						<ul class="nav nav-tabs" id="myTab">
-							<li class="active"><a href="#info">Info</a></li>
-							<li><a href="#custom">Custom</a></li>
-							<li><a href="#messages">Messages</a></li>
-						</ul>
-						 
-						<div id="myTabContent" class="tab-content">
-							<div class="tab-pane active" id="info">
-								<h3>Charisma <small>a fully featued template</small></h3>
-								<p>Its a fully featured, responsive template for your admin panel. Its optimized for tablet and mobile phones. Scan the QR code below to view it in your mobile device.</p> <img alt="QR Code" class="charisma_qr center" src="img/qrcode136.png" />
-							</div>
-							<div class="tab-pane" id="custom">
-								<h3>Custom <small>small text</small></h3>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor.</p>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales at. Nulla tellus elit, varius non commodo eget, mattis vel eros. In sed ornare nulla. Donec consectetur, velit a pharetra ultricies, diam lorem lacinia risus, ac commodo orci erat eu massa. Sed sit amet nulla ipsum. Donec felis mauris, vulputate sed tempor at, aliquam a ligula. Pellentesque non pulvinar nisi.</p>
-							</div>
-							<div class="tab-pane" id="messages">
-								<h3>Messages <small>small text</small></h3>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales at. Nulla tellus elit, varius non commodo eget, mattis vel eros. In sed ornare nulla. Donec consectetur, velit a pharetra ultricies, diam lorem lacinia risus, ac commodo orci erat eu massa. Sed sit amet nulla ipsum. Donec felis mauris, vulputate sed tempor at, aliquam a ligula. Pellentesque non pulvinar nisi.</p>
-								<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor.</p>
-							</div>
-						</div>
+						<form class="form-horizontal" method = 'post' action=' <?php $_SERVER['PHP_SELF'] ?> '>
+							<fieldset>
+								<?php
+								if($error == 1){
+									echo("<div class='alert alert-error'> <center>");									
+									echo("<p><strong>$err_msg</p>");									
+									echo("</center> </div>");
+								}else{
+								?>
+								
+								<div class="alert alert-info">
+									<center>
+										<label>Busqueda de Clientes</label>
+									</center>
+								</div>								
+															
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nocuenta'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Número de cuenta: </label>
+									<div class="controls">
+										<input class="input-xlarge focused" name='nocuenta' type="text" <?php if(isset($_POST['nocuenta'])){echo("value = '" . $_POST['nocuenta'] . "'");} ?>>
+									</div>
+								</div>
+																
+								<input type='hidden' name='enviado' value='1'>
+							  
+								<div class="form-actions">
+								<center>
+									<button type="submit" class="btn btn-primary">Buscar</button>
+								</center>
+								</div>
+							</fieldset>
+						  </form>
 					</div>
 				</div><!--/span-->
-			</div><!--/row-->		  
-       
-					<!-- content ends -->
+			</div><!--/row-->
+			<?php 
+								}
+			}
+			?>		
+			<!-- content ends -->
 			</div><!--/#content.span10-->
 				</div><!--/fluid-row-->
 				

@@ -249,7 +249,7 @@ return alfanum($_POST[$cadena]);
 								<?php
 								if($error == 0){
 									$query = "select clientes.*, departamentos.descripcion as depto, municipios.descripcion as muni, numeroDeCuenta, fechaApertura, saldo, bin.descripcion from clientes, departamentos, municipios, cuentas, bin where clientes.idCliente = '$id' and clientes.departamento = departamentos.iddepartamento and clientes.municipio = municipios.idMunicipio and cuentas.idCliente = clientes.idCliente and cuentas.bin = bin.bin";
-									echo("Q1 = " . $query . "<br>");
+									//echo("Q1 = " . $query . "<br>");
 									$result = mysql_query($query);
 									//echo("Q2 = " . $result . "<br>");
 									if(mysql_errno($con) > 0){
@@ -284,7 +284,7 @@ return alfanum($_POST[$cadena]);
 												echo("<td>$items[numeroDeCuenta]</td>");
 												echo("<td class='center'>$items[descripcion]</td>");
 												echo("<td class='center'>$items[fechaApertura]</td>");
-												echo("<td class='center'>$items[saldo]</td>");
+												echo("<td class='center'>" . number_format($items['saldo'],2,".",",") . "</td>");
 												echo("</tr>");
 											}
 											$result = mysql_query($query);

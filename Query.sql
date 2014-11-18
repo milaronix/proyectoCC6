@@ -54,6 +54,57 @@ PRIMARY KEY (idCuenta),
 FOREIGN KEY (idCliente) REFERENCES clientes(idCliente)
 );
 
+alter table cuentas add bin int;
+
+create table bin(
+binId int,
+bin double,
+descripcion char(100),
+
+PRIMARY KEY (binId)
+);
+
+truncate table cuentas;
+drop table bin;
+alter table bin add correlativo int;
+select * from bin;
+update cc6.bin set correlativo = 2 where bin = 4236980000000000;
+update cc6.bin set saldo = 130 where bin.numeroDeCuentas = 4236980000000003;
+select * from cuentas;
+select * from clientes;
+ALTER TABLE cuentas MODIFY bin bigint;
+ALTER TABLE cuentas add unique (numeroDeCuenta);
+select correlativo+1 from bin where binid = 412587;
+describe cuentas;
+
+create table tipoTransacciones(
+tipoTransaccion char,
+descripcion varchar(100),
+
+PRIMARY KEY (tipoTransaccion)
+);
+
+select * from tipoTransacciones;
+select * from transacciones;
+insert into cc6.transacciones (numeroDeCuenta, idCliente, tipoTransaccion, concepto, fechaTransaccion, monto) values ('4236980000000003', '10', 'D', 'DEPOSITO EN EFECTIVO POR Q100', now(), '100');
+
+create table transacciones(
+autorizacion int auto_increment,
+numeroDeCuenta bigint,
+idCliente int,
+tipoTransaccion char,
+concepto varchar(100),
+fechaTransaccion date,
+monto float,
+
+PRIMARY KEY (autorizacion),
+FOREIGN KEY (tipoTransaccion) REFERENCES tipoTransacciones(tipoTransaccion),
+FOREIGN KEY (idCliente) REFERENCES clientes(idCliente),
+FOREIGN KEY (numeroDeCuenta) REFERENCES cuentas(numeroDeCuenta)
+);
+
+
+
 create table tipoUsuario(
 idTipoUsuario int auto_increment,
 descripcion varchar(100),
@@ -452,6 +503,8 @@ INSERT INTO `cc6`.`municipios` (`descripcion`, `idDepartamento`) VALUES ('SAN DI
 INSERT INTO `cc6`.`municipios` (`descripcion`, `idDepartamento`) VALUES ('LA UNION', '22');
 INSERT INTO `cc6`.`municipios` (`descripcion`, `idDepartamento`) VALUES ('HUITE', '22');
 
-select * from clientes;
+select * from cuentas;
 select * from clientes where nombreCliente like'%juan%' or nit = '68253400' or dpi = '2080205510101';
-select clientes.*, departamentos.descripcion, municipios.descripcion from clientes, departamentos, municipios where idCliente = 1 and clientes.departamento = departamentos.idDepartamento and clientes.municipio = municipios.idMunicipio
+select clientes.*, departamentos.descripcion, municipios.descripcion from clientes, departamentos, municipios where idCliente = 1 and clientes.departamento = departamentos.idDepartamento and clientes.municipio = municipios.idMunicipio;
+
+select curdate();
