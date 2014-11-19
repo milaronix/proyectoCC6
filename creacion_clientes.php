@@ -161,23 +161,13 @@ return alfanum($_POST[$cadena]);
 						<li class="nav-header hidden-tablet">Cuentas</li>
 						<?php 
 						if ($_SESSION['leer'] == 1){
-						echo("<li><a class='ajax-link' href='consulta cuentas.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
-						}
-						if ($_SESSION['modificar'] == 1){
-						echo("<li><a class='ajax-link' href='modificacion cuentas.php'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Cuentas</span></a></li>");
+						echo("<li><a class='ajax-link' href='cliente para consulta cuenta.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
 						}
 						if ($_SESSION['crear'] == 1){
-						echo("<li><a class='ajax-link' href='creacion_cuentas.php'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Cuentas</span></a></li>");
+						echo("<li><a class='ajax-link' href='cliente para cuenta.php'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Cuentas</span></a></li>");
 						}
-						?>
-						<li class="nav-header hidden-tablet">Gestiones</li>
-						<li><a class="ajax-link" href="#"><i class="icon-eye-open"></i><span class="hidden-tablet"> Consulta de Gestiones</span></a></li>
-						<?php 
-						if ($_SESSION['leer'] == 1 && $_SESSION['modificar'] == 1 && $_SESSION['crear'] == 1 && $_SESSION['eliminar'] == 1){
-						echo("<li class='nav-header hidden-tablet'>Usuarios</li>");
-						echo("<li><a class='ajax-link' href='#'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Usuarios</span></a></li>");
-						echo("<li><a class='ajax-link' href='#'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Usuarios</span></a></li>");
-						echo("<li><a class='ajax-link' href='#'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Usuarios</span></a></li>");
+						if ($_SESSION['crear'] == 1){
+						echo("<li><a class='ajax-link' href='cliente para deposito.php'><i class='icon-download-alt'></i><span class='hidden-tablet'> Depósito a cuenta</span></a></li>");
 						}
 						?>
 					</ul>

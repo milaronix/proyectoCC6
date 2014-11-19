@@ -163,23 +163,13 @@ return alfanum($_POST[$cadena]);
 						<li class="nav-header hidden-tablet">Cuentas</li>
 						<?php 
 						if ($_SESSION['leer'] == 1){
-						echo("<li><a class='ajax-link' href='consulta cuentas.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
-						}
-						if ($_SESSION['modificar'] == 1){
-						echo("<li><a class='ajax-link' href='modificacion cuentas.php'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Cuentas</span></a></li>");
+						echo("<li><a class='ajax-link' href='cliente para consulta cuenta.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
 						}
 						if ($_SESSION['crear'] == 1){
 						echo("<li><a class='ajax-link' href='cliente para cuenta.php'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Cuentas</span></a></li>");
 						}
-						?>
-						<li class="nav-header hidden-tablet">Gestiones</li>
-						<li><a class="ajax-link" href="#"><i class="icon-eye-open"></i><span class="hidden-tablet"> Consulta de Gestiones</span></a></li>
-						<?php 
-						if ($_SESSION['leer'] == 1 && $_SESSION['modificar'] == 1 && $_SESSION['crear'] == 1 && $_SESSION['eliminar'] == 1){
-						echo("<li class='nav-header hidden-tablet'>Usuarios</li>");
-						echo("<li><a class='ajax-link' href='#'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Usuarios</span></a></li>");
-						echo("<li><a class='ajax-link' href='#'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Usuarios</span></a></li>");
-						echo("<li><a class='ajax-link' href='#'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Usuarios</span></a></li>");
+						if ($_SESSION['crear'] == 1){
+						echo("<li><a class='ajax-link' href='cliente para deposito.php'><i class='icon-download-alt'></i><span class='hidden-tablet'> Depósito a cuenta</span></a></li>");
 						}
 						?>
 					</ul>
@@ -220,7 +210,14 @@ return alfanum($_POST[$cadena]);
 					}
 					
 					if($error == 0){
-						$query = "select * from clientes where nombreCliente like'%$_POST[nombre]%' or nit = '$_POST[nit]' or dpi = '$_POST[dpi]'";
+						if(empty($_POST['nit']) && empty($_POST['dpi']) && empty($_POST['nocuenta'])){
+							$query = "select * from clientes where nombreCliente like'%$_POST[nombre]%'";
+							echo("Q1 = " . $query);
+						}else{
+							$query = "select * from clientes, cuentas where cuentas.idcliente = clientes.idcliente and (nit = '$_POST[nit]' or dpi = '$_POST[dpi]' or numeroDeCuenta = '$_POST[nocuenta]')";
+							echo("Q2 = " . $query);
+						}
+						
 						$resultado = mysql_query($query);
 						if(mysql_errno($con) > 0){
 							$err_msg = "<center>ERROR: " . mysql_errno($con) . " - - - " . mysql_error($con);
@@ -335,6 +332,13 @@ return alfanum($_POST[$cadena]);
 									<label class="control-label" for="focusedInput">DPI: </label>
 									<div class="controls">
 										<input class="input-xlarge focused" name='dpi' type="text" <?php if(isset($_POST['dpi'])){echo("value = '" . $_POST['dpi'] . "'");} ?>>
+									</div>
+								</div>
+								
+								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['nocuenta'] == ''){ echo("error");} ?>">
+									<label class="control-label" for="focusedInput">Número de cuenta: </label>
+									<div class="controls">
+										<input class="input-xlarge focused" name='nocuenta' type="text" <?php if(isset($_POST['nocuenta'])){echo("value = '" . $_POST['nocuenta'] . "'");} ?>>
 									</div>
 								</div>
 																

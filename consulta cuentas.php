@@ -9,7 +9,9 @@ session_start();
 $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 $error = 0;
 $query_exitoso = 0;
+$ctatrx = 0;
 $id = $_GET['id'];
+$ctatrx = $_GET['ctatrx'];
 
 function reemGuion($cadena) {
 	$patron = '/-/';
@@ -163,23 +165,13 @@ return alfanum($_POST[$cadena]);
 						<li class="nav-header hidden-tablet">Cuentas</li>
 						<?php 
 						if ($_SESSION['leer'] == 1){
-						echo("<li><a class='ajax-link' href='consulta cuentas.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
-						}
-						if ($_SESSION['modificar'] == 1){
-						echo("<li><a class='ajax-link' href='modificacion cuentas.php'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Cuentas</span></a></li>");
+						echo("<li><a class='ajax-link' href='cliente para consulta cuenta.php'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Cuentas</span></a></li>");
 						}
 						if ($_SESSION['crear'] == 1){
 						echo("<li><a class='ajax-link' href='cliente para cuenta.php'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Cuentas</span></a></li>");
 						}
-						?>
-						<li class="nav-header hidden-tablet">Gestiones</li>
-						<li><a class="ajax-link" href="#"><i class="icon-eye-open"></i><span class="hidden-tablet"> Consulta de Gestiones</span></a></li>
-						<?php 
-						if ($_SESSION['leer'] == 1 && $_SESSION['modificar'] == 1 && $_SESSION['crear'] == 1 && $_SESSION['eliminar'] == 1){
-						echo("<li class='nav-header hidden-tablet'>Usuarios</li>");
-						echo("<li><a class='ajax-link' href='#'><i class='icon-eye-open'></i><span class='hidden-tablet'> Consulta Usuarios</span></a></li>");
-						echo("<li><a class='ajax-link' href='#'><i class='icon-edit'></i><span class='hidden-tablet'> Modificación Usuarios</span></a></li>");
-						echo("<li><a class='ajax-link' href='#'><i class='icon-plus-sign'></i><span class='hidden-tablet'> Creacion Usuarios</span></a></li>");
+						if ($_SESSION['crear'] == 1){
+						echo("<li><a class='ajax-link' href='cliente para deposito.php'><i class='icon-download-alt'></i><span class='hidden-tablet'> Depósito a cuenta</span></a></li>");
 						}
 						?>
 					</ul>
@@ -259,6 +251,10 @@ return alfanum($_POST[$cadena]);
 										//$items = mysql_fetch_array($result);
 									}
 								}
+								
+								if($ctatrx > 0){
+								
+								}
 								?>
 								
 								<div class="alert alert-info">
@@ -274,6 +270,7 @@ return alfanum($_POST[$cadena]);
 											<th>Producto</th>
 											<th>Fecha Apertura</th>
 											<th>Saldo</th>																					  
+											<th>Consulta Bitacora</th>																					  
 										</tr>
 									</thead>   
 									<tbody>
@@ -285,6 +282,8 @@ return alfanum($_POST[$cadena]);
 												echo("<td class='center'>$items[descripcion]</td>");
 												echo("<td class='center'>$items[fechaApertura]</td>");
 												echo("<td class='center'>" . number_format($items['saldo'],2,".",",") . "</td>");
+												echo("<td class='center'><a class='btn btn-success' href='$_SERVER[PHP_SELF]?ctatrx=$items[numeroDeCuenta]'> Transacciones </a> </td>");
+												echo("<input type='hidden' name='transacciones' value='1'>");
 												echo("</tr>");
 											}
 											$result = mysql_query($query);
@@ -395,7 +394,7 @@ return alfanum($_POST[$cadena]);
 								
 								
 								<div class="control-group <?php if($_POST['enviado'] == 1 && $_POST['bin'] == ''){ echo("error");} ?>">
-									<label class="control-label" for="bin">bin:</label>
+									<label class="control-label" for="bin">Departamento:</label>
 									<div class="controls">
 									  <span class="input-xlarge uneditable-input"><?php echo($items['depto']); ?></span>
 									</div>
