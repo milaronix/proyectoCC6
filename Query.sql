@@ -86,7 +86,12 @@ PRIMARY KEY (tipoTransaccion)
 
 select * from tipoTransacciones;
 select * from transacciones;
+select * from transacciones where numeroDeCuenta = 4236980000000003;
 insert into cc6.transacciones (numeroDeCuenta, idCliente, tipoTransaccion, concepto, fechaTransaccion, monto) values ('4236980000000003', '10', 'D', 'DEPOSITO EN EFECTIVO POR Q100', now(), '100');
+select saldo from cuentas where cuentas.numeroDeCuenta = 4236980000000003;
+truncate transacciones;
+select * from cuentas;
+alter table transacciones add hora time;
 
 create table transacciones(
 autorizacion int auto_increment,

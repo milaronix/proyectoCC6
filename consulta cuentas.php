@@ -10,8 +10,12 @@ $tiempo_expira = time() - $_SESSION['UltimoMovimiento'];
 $error = 0;
 $query_exitoso = 0;
 $ctatrx = 0;
+if(isset($_GET['id'])){
 $id = $_GET['id'];
+}
+if(isset($_GET['ctatrx'])){
 $ctatrx = $_GET['ctatrx'];
+}
 
 function reemGuion($cadena) {
 	$patron = '/-/';
@@ -253,7 +257,43 @@ return alfanum($_POST[$cadena]);
 								}
 								
 								if($ctatrx > 0){
-								
+									?>
+										<table class="table table-bordered table-striped table-condensed">
+											<thead>
+												<tr>
+													<th>Autorizacion</th>
+													<th>Numero de Cuenta</th>
+													<th>Tipo de Transaccion</th>
+													<th>Concepto</th>																					  
+													<th>Fecha Transaccion</th>
+													<th>Hora</th>
+													<th>Monto</th>
+												</tr>
+											</thead>   
+											<tbody>
+												<tr>
+													<?php
+													$queryTRX = "select * from transacciones where numeroDeCuenta = $ctatrx";
+													//echo("Q1 = " . $queryTRX);
+													$resultado = mysql_query($queryTRX);
+													while($transacciones = mysql_fetch_array($resultado)){
+														echo("<tr>");
+														echo("<td>$transacciones[autorizacion]</td>");
+														echo("<td>$transacciones[numeroDeCuenta]</td>");
+														echo("<td>$transacciones[tipoTransaccion]</td>");
+														echo("<td>$transacciones[concepto]</td>");
+														echo("<td>$transacciones[fechaTransaccion]</td>");
+														echo("<td>$transacciones[hora]</td>");
+														echo("<td class='center'>" . number_format($transacciones['monto'],2,".",",") . "</td>");
+														echo("</tr>");
+													}
+													$result = mysql_query($query);
+													$items = mysql_fetch_array($result);
+													?>
+																							
+												</tr>
+										</table>
+									<?php
 								}
 								?>
 								
@@ -282,7 +322,7 @@ return alfanum($_POST[$cadena]);
 												echo("<td class='center'>$items[descripcion]</td>");
 												echo("<td class='center'>$items[fechaApertura]</td>");
 												echo("<td class='center'>" . number_format($items['saldo'],2,".",",") . "</td>");
-												echo("<td class='center'><a class='btn btn-success' href='$_SERVER[PHP_SELF]?ctatrx=$items[numeroDeCuenta]'> Transacciones </a> </td>");
+												echo("<td class='center'><a class='btn btn-success' href='$_SERVER[PHP_SELF]?ctatrx=$items[numeroDeCuenta]&id=$id'> Transacciones </a> </td>");
 												echo("<input type='hidden' name='transacciones' value='1'>");
 												echo("</tr>");
 											}

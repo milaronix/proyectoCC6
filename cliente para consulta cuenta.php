@@ -212,10 +212,10 @@ return alfanum($_POST[$cadena]);
 					if($error == 0){
 						if(empty($_POST['nit']) && empty($_POST['dpi']) && empty($_POST['nocuenta'])){
 							$query = "select * from clientes where nombreCliente like'%$_POST[nombre]%'";
-							echo("Q1 = " . $query);
+							//echo("Q1 = " . $query);
 						}else{
 							$query = "select * from clientes, cuentas where cuentas.idcliente = clientes.idcliente and (nit = '$_POST[nit]' or dpi = '$_POST[dpi]' or numeroDeCuenta = '$_POST[nocuenta]')";
-							echo("Q2 = " . $query);
+							//echo("Q2 = " . $query);
 						}
 						
 						$resultado = mysql_query($query);

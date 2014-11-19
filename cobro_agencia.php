@@ -133,7 +133,7 @@ if(isset($_POST['cliente_tarjeta']) && !empty($_POST['cliente_tarjeta'])){
 				$cobro_response = array(
 					'codigo_reservacion' => $_POST['codigo_reservacion'], 
 					'status' => 'denegada',
-					'no_autorizacion' => 0,
+					'no_autorizacion' => '0',
 					'mensaje' => 'SALDO INSUFICIENTE'
 				);
 
@@ -146,7 +146,7 @@ if(isset($_POST['cliente_tarjeta']) && !empty($_POST['cliente_tarjeta'])){
 			$cobro_response = array(
 				'codigo_reservacion' => $_POST['codigo_reservacion'], 
 				'status' => 'denegada',
-				'no_autorizacion' => 0,
+				'no_autorizacion' => '0',
 				'mensaje' => 'ALGUNA DE LAS CUENTAS NO EXISTE EN EL SISTEMA'
 			);
 
@@ -159,7 +159,7 @@ if(isset($_POST['cliente_tarjeta']) && !empty($_POST['cliente_tarjeta'])){
 		$cobro_response = array(
 			'codigo_reservacion' => $_POST['codigo_reservacion'], 
 			'status' => 'denegada',
-			'no_autorizacion' => 0,
+			'no_autorizacion' => '0',
 			'mensaje' => 'ALGUNA DE LAS CUENTAS ES DE OTRO BANCO O NO ES VALIDA'
 		);
 
